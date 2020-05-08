@@ -86,10 +86,15 @@ public class Main {
             switch (tokens[0]) {
                 case "add":
                     String ip = tokens[1];
-                    int port = Integer.parseInt(tokens[2]);
-                    String user = tokens[3];
-                    String password = tokens[4];
-                    addAccount(ip, port, user, password);
+                    try {
+                        int port = Integer.parseInt(tokens[2]);
+                        String user = tokens[3];
+                        String password = tokens[4];
+                        addAccount(ip, port, user, password);
+                    } catch (NumberFormatException e) {
+                        Util.log.log(Level.SEVERE, e.getMessage(), e);
+                        System.err.println("Invalid argument type");
+                    }
                     break;
                 case "list":
                     listNewMessages();
@@ -98,12 +103,12 @@ public class Main {
                     if (tokens[1].equals("all")) {
                         saveAll();
                     } else for (int i = 1; i < tokens.length; i++) {
-                        try{
+                        try {
                             int msgNumber = Integer.parseInt(tokens[i]);
                             if (msgNumber >= headers.size()) {
                                 System.err.println("Message doesn't exist");
                             } else saveMessage(msgNumber);
-                        } catch(NumberFormatException e){
+                        } catch (NumberFormatException e) {
                             Util.log.log(Level.SEVERE, e.getMessage(), e);
                             System.err.println("Invalid argument type");
                         }
