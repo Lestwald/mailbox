@@ -96,7 +96,10 @@ public class Account {
 
     public void addToDB(int id) {
         try {
-            Main.stmt.executeUpdate(String.format("INSERT INTO MAIL VALUES ('%s', '%s')", getUID(id), user));
+            ResultSet res = Main.stmt.executeQuery(String.format("SELECT * FROM MAIL WHERE MAIL_UID = '%s' AND USERNAME = '%s'", getUID(id), user));
+            if (!res.next()) {
+                Main.stmt.executeUpdate(String.format("INSERT INTO MAIL VALUES ('%s', '%s')", getUID(id), user));
+            }
         } catch (SQLException e) {
             Util.log.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -105,19 +108,22 @@ public class Account {
     String saveMessage(int id) {
         String filename = user + " " + getUID(id);
         File file = new File(new File("").getAbsolutePath() + "\\src\\main\\messages\\" + filename);
-        try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            send("RETR " + id);
-            String line;
-            while (!(line = input.readLine()).equals(".")) {
-                writer.write(line + "\n");
+        if (!file.exists()) {
+            try {
+                BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+                send("RETR " + id);
+                String line;
+                while (!(line = input.readLine()).equals(".")) {
+                    writer.write(line + "\n");
+                }
+                writer.close();
+            } catch (IOException e) {
+                Util.log.log(Level.SEVERE, e.getMessage(), e);
             }
-            writer.close();
-        } catch (IOException e) {
-            Util.log.log(Level.SEVERE, e.getMessage(), e);
+            addToDB(id);
+            return filename;
         }
-        addToDB(id);
-        return filename;
+        return "";
     }
 
     void listNewMessages() {
