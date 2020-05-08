@@ -52,8 +52,10 @@ public class Main {
         for (Account account : accounts) {
             if (account.getUser().equals(headers.get(msgIndex).get(1))) {
                 String res = account.saveMessage(Integer.parseInt(headers.get(msgIndex).get(2)));
-                Util.log.info(String.format("Message %s saved as '%s'", msgIndex, res));
-                System.out.println(String.format("Message %s saved as '%s'", msgIndex, res));
+                if (!res.isEmpty()) {
+                    Util.log.info(String.format("Message %s saved as '%s'", msgIndex, res));
+                    System.out.println(String.format("Message %s saved as '%s'", msgIndex, res));
+                }
                 return;
             }
         }
@@ -66,8 +68,10 @@ public class Main {
                 List<String> header = headers.get(i);
                 if (account.getUser().equals(header.get(1))) {
                     String res = account.saveMessage(Integer.parseInt(header.get(2)));
-                    Util.log.info(String.format("Message %s saved as '%s'", i, res));
-                    System.out.println(String.format("Message %s saved as '%s'", i, res));
+                    if (!res.isEmpty()) {
+                        Util.log.info(String.format("Message %s saved as '%s'", i, res));
+                        System.out.println(String.format("Message %s saved as '%s'", i, res));
+                    }
                 }
             }
         }
